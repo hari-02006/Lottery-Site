@@ -1,6 +1,4 @@
 const COOLDOWN_MS = 2 * 60 * 1000;
-const AD_MIN_VIEW_MS = 15 * 1000;
-const LAST_CODE_TIME_KEY = "lottery_last_code_at";
 const LAST_CODE_VALUE_KEY = "lottery_last_code_value";
 
 // Replace these before launch.
@@ -14,8 +12,8 @@ const cooldownText = document.getElementById("cooldownText");
 const codeValue = document.getElementById("codeValue");
 
 let currentCode = null;
-let adGateActive = false;
-let adGateUnlockAt = 0;
+let generationActive = false;
+let generationUnlockAt = 0;
 
 function randomFromCharset(charset) {
   const array = new Uint32Array(1);
@@ -32,13 +30,6 @@ function generateLotteryCode(prefix, length) {
   return `${prefix}-${token}`;
 }
 
-function getRemainingMs() {
-  const lastMs = Number(localStorage.getItem(LAST_CODE_TIME_KEY) || 0);
-  if (!lastMs) return 0;
-  const elapsed = Date.now() - lastMs;
-  return Math.max(0, COOLDOWN_MS - elapsed);
-}
-
 function formatCountdown(ms) {
   const totalSeconds = Math.ceil(ms / 1000);
   const minutes = Math.floor(totalSeconds / 60);
@@ -47,23 +38,19 @@ function formatCountdown(ms) {
 }
 
 function updateCooldownUi() {
-  if (adGateActive) {
-    const msLeft = Math.max(0, adGateUnlockAt - Date.now());
+  if (generationActive) {
+    const msLeft = Math.max(0, generationUnlockAt - Date.now());
     if (msLeft > 0) {
       getCodeBtn.disabled = true;
-      cooldownText.textContent = `Ad step in progress. Code will appear in ${formatCountdown(msLeft)}.`;
+      cooldownText.textContent = `Timer running. Your code will appear in ${formatCountdown(msLeft)}.`;
       return;
     }
+    finishTimerAndGenerateCode();
+    return;
   }
 
-  const remaining = getRemainingMs();
-  if (remaining > 0) {
-    getCodeBtn.disabled = true;
-    cooldownText.textContent = `Please wait ${formatCountdown(remaining)} before getting a new code.`;
-  } else {
-    getCodeBtn.disabled = false;
-    cooldownText.textContent = "You can generate a code now.";
-  }
+  getCodeBtn.disabled = false;
+  cooldownText.textContent = "Click Get Lottery Code to start a 2-minute timer.";
 }
 
 function openClickAd() {
@@ -71,38 +58,32 @@ function openClickAd() {
   window.open(ADSTERRA_CLICK_URL, "_blank", "noopener,noreferrer");
 }
 
-function finishAdGateAndGenerateCode() {
-  adGateActive = false;
-  adGateUnlockAt = 0;
+function finishTimerAndGenerateCode() {
+  generationActive = false;
+  generationUnlockAt = 0;
 
   currentCode = generateLotteryCode("FLY", 4);
-  localStorage.setItem(LAST_CODE_TIME_KEY, String(Date.now()));
   localStorage.setItem(LAST_CODE_VALUE_KEY, currentCode);
 
   codeValue.textContent = currentCode;
   copyBtn.disabled = false;
   submitBtn.disabled = false;
-  updateCooldownUi();
+  getCodeBtn.disabled = false;
+  cooldownText.textContent = "Code generated. Click Get Lottery Code for the next 2-minute timer.";
 }
 
 function onGetCodeClick() {
-  if (getRemainingMs() > 0) return;
-  if (adGateActive) return;
+  if (generationActive) return;
 
   openClickAd();
 
-  adGateActive = true;
-  adGateUnlockAt = Date.now() + AD_MIN_VIEW_MS;
+  generationActive = true;
+  generationUnlockAt = Date.now() + COOLDOWN_MS;
   copyBtn.disabled = true;
   submitBtn.disabled = true;
   codeValue.textContent = "-";
-  cooldownText.textContent = `Ad opened in a new tab. Return here. Code will appear in ${formatCountdown(AD_MIN_VIEW_MS)}.`;
+  cooldownText.textContent = `Ad opened in a new tab. 2-minute timer started. Code will appear in ${formatCountdown(COOLDOWN_MS)}.`;
   getCodeBtn.disabled = true;
-
-  setTimeout(() => {
-    if (!adGateActive) return;
-    finishAdGateAndGenerateCode();
-  }, AD_MIN_VIEW_MS);
 }
 
 async function onCopyClick() {
