@@ -41,7 +41,7 @@ function updateCooldownUi() {
   if (generationActive) {
     const msLeft = Math.max(0, generationUnlockAt - Date.now());
     if (msLeft > 0) {
-      getCodeBtn.disabled = true;
+      getCodeBtn.disabled = false;
       cooldownText.textContent = `Timer running. Your code will appear in ${formatCountdown(msLeft)}.`;
       return;
     }
@@ -73,7 +73,11 @@ function finishTimerAndGenerateCode() {
 }
 
 function onGetCodeClick() {
-  if (generationActive) return;
+  if (generationActive) {
+    const msLeft = Math.max(0, generationUnlockAt - Date.now());
+    cooldownText.textContent = `Timer already running. Code will appear in ${formatCountdown(msLeft)}.`;
+    return;
+  }
 
   openClickAd();
 
@@ -83,7 +87,7 @@ function onGetCodeClick() {
   submitBtn.disabled = true;
   codeValue.textContent = "-";
   cooldownText.textContent = `Ad opened in a new tab. 2-minute timer started. Code will appear in ${formatCountdown(COOLDOWN_MS)}.`;
-  getCodeBtn.disabled = true;
+  getCodeBtn.disabled = false;
 }
 
 async function onCopyClick() {
