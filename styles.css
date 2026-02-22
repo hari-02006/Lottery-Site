@@ -49,6 +49,12 @@ body {
   top: 12px;
 }
 
+.side-ad-slot {
+  display: grid;
+  place-items: center;
+  min-height: 250px;
+}
+
 h1,
 h2 {
   margin-top: 0;
