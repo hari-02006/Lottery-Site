@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FLY Promo Lottery</title>
+  <meta name="description" content="Promotional lottery entry platform. No guaranteed winnings." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="container">
+    <section class="hero card" aria-label="Hero">
+      <p class="eyebrow">PROMOTIONAL LOTTERY</p>
+      <h1>Get a Code. Submit It. Enter the Draw.</h1>
+      <p class="subtitle">Each valid code equals one lottery entry. More entries increase your winning chance.</p>
+      <div class="pill-row" aria-label="Key Notes">
+        <span class="pill">No guaranteed winnings</span>
+        <span class="pill">Chance-based selection</span>
+        <span class="pill">1 code every 5 minutes</span>
+      </div>
+      <p><a href="#entry">Go to code generator</a></p>
+    </section>
+
+    <section class="legal" aria-label="Legal Notice">
+      <p>This is a promotional lottery.</p>
+      <p>No guaranteed winnings.</p>
+      <p>Winning is based on chance.</p>
+      <p>Ads support site operation and are not mandatory for participation.</p>
+    </section>
+
+    <section class="card entry" id="entry" aria-label="Lottery Entry">
+      <h2>Get Lottery Entry Code</h2>
+      <p id="cooldownText">You can generate a code now.</p>
+      <p class="subtitle">After you click, an ad opens first. Your code appears after the ad step completes.</p>
+
+      <button id="getCodeBtn" type="button">Get Lottery Code</button>
+
+      <div class="code-box" aria-live="polite">
+        <label for="codeValue">Your Code</label>
+        <div id="codeValue">-</div>
+      </div>
+
+      <div class="actions">
+        <button id="copyBtn" type="button" disabled>Copy Code</button>
+        <button id="submitBtn" type="button" disabled>Submit Code</button>
+      </div>
+    </section>
+
+    <section class="card" aria-label="Banner Advertisement">
+      <h2>Sponsored</h2>
+      <div id="banner-ad">
+        <!-- Paste your Adsterra banner script/code below -->
+        <p class="placeholder">Banner ad slot</p>
+      </div>
+    </section>
+
+    <section class="card" aria-label="How It Works">
+      <h2>How It Works</h2>
+      <ol>
+        <li>Click <strong>Get Lottery Code</strong>.</li>
+        <li>A user-initiated ad opens in a new tab.</li>
+        <li>Your random code appears here.</li>
+        <li>Click <strong>Submit Code</strong> to open the Google Form.</li>
+        <li>Each valid submitted code equals one lottery entry.</li>
+      </ol>
+      <p><a href="terms.html">Read full rules and policy notes</a></p>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
