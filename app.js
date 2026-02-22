@@ -4,7 +4,7 @@ const LAST_CODE_TIME_KEY = "lottery_last_code_at";
 const LAST_CODE_VALUE_KEY = "lottery_last_code_value";
 
 // Replace these before launch.
-const ADSTERRA_CLICK_URL = "https://example.com/your-adsterra-direct-link";
+const ADSTERRA_CLICK_URL = "https://flaskledgeheadquarters.com/pemp37f65r?key=acd9f67ad8086ce5c86f6a8dcffed6c2";
 const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/REPLACE_WITH_YOUR_FORM_ID/viewform";
 
 const getCodeBtn = document.getElementById("getCodeBtn");
