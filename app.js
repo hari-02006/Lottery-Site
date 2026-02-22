@@ -10,10 +10,15 @@ const copyBtn = document.getElementById("copyBtn");
 const submitBtn = document.getElementById("submitBtn");
 const cooldownText = document.getElementById("cooldownText");
 const codeValue = document.getElementById("codeValue");
+const sponsorLinks = document.querySelectorAll("[data-sponsor-link]");
 
 let currentCode = null;
 let generationActive = false;
 let generationUnlockAt = 0;
+let waitingForSponsor = false;
+let sponsorClicked = false;
+let sponsorClickedAt = 0;
+let pageWentHiddenAfterSponsor = false;
 
 function randomFromCharset(charset) {
   const array = new Uint32Array(1);
@@ -49,13 +54,35 @@ function updateCooldownUi() {
     return;
   }
 
+  if (waitingForSponsor) {
+    getCodeBtn.disabled = false;
+    cooldownText.textContent = "Step 2: Click Sponsored Offer link, then return to this tab. Timer will start after you return.";
+    return;
+  }
+
   getCodeBtn.disabled = false;
   cooldownText.textContent = "Click Get Lottery Code to start a 2-minute timer.";
 }
 
-function openClickAd() {
-  // Must run only in direct response to user click.
-  window.open(ADSTERRA_CLICK_URL, "_blank", "noopener,noreferrer");
+function startGenerationTimer() {
+  waitingForSponsor = false;
+  sponsorClicked = false;
+  sponsorClickedAt = 0;
+  pageWentHiddenAfterSponsor = false;
+
+  generationActive = true;
+  generationUnlockAt = Date.now() + COOLDOWN_MS;
+  copyBtn.disabled = true;
+  submitBtn.disabled = true;
+  codeValue.textContent = "-";
+  cooldownText.textContent = `Return detected. 2-minute timer started. Code will appear in ${formatCountdown(COOLDOWN_MS)}.`;
+}
+
+function tryStartTimerOnReturn() {
+  if (!waitingForSponsor || !sponsorClicked || generationActive) return;
+  if (Date.now() - sponsorClickedAt < 1000) return;
+  if (!pageWentHiddenAfterSponsor) return;
+  startGenerationTimer();
 }
 
 function finishTimerAndGenerateCode() {
@@ -79,14 +106,14 @@ function onGetCodeClick() {
     return;
   }
 
-  openClickAd();
-
-  generationActive = true;
-  generationUnlockAt = Date.now() + COOLDOWN_MS;
+  waitingForSponsor = true;
+  sponsorClicked = false;
+  sponsorClickedAt = 0;
+  pageWentHiddenAfterSponsor = false;
   copyBtn.disabled = true;
   submitBtn.disabled = true;
   codeValue.textContent = "-";
-  cooldownText.textContent = `Ad opened in a new tab. 2-minute timer started. Code will appear in ${formatCountdown(COOLDOWN_MS)}.`;
+  cooldownText.textContent = "Step 1 complete. Now click Sponsored Offer link. Timer starts when you return.";
   getCodeBtn.disabled = false;
 }
 
@@ -112,6 +139,27 @@ function onSubmitClick() {
 getCodeBtn.addEventListener("click", onGetCodeClick);
 copyBtn.addEventListener("click", onCopyClick);
 submitBtn.addEventListener("click", onSubmitClick);
+sponsorLinks.forEach((link) => {
+  link.addEventListener("click", () => {
+    if (!waitingForSponsor || generationActive) return;
+    sponsorClicked = true;
+    sponsorClickedAt = Date.now();
+    cooldownText.textContent = "Sponsor opened. Return to this tab to start the 2-minute timer.";
+  });
+});
+
+document.addEventListener("visibilitychange", () => {
+  if (!waitingForSponsor || !sponsorClicked || generationActive) return;
+  if (document.visibilityState === "hidden") {
+    pageWentHiddenAfterSponsor = true;
+    return;
+  }
+  tryStartTimerOnReturn();
+});
+
+window.addEventListener("focus", () => {
+  tryStartTimerOnReturn();
+});
 
 const persistedCode = localStorage.getItem(LAST_CODE_VALUE_KEY);
 if (persistedCode) {
