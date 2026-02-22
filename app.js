@@ -1,4 +1,4 @@
-const COOLDOWN_MS = 5 * 60 * 1000;
+const COOLDOWN_MS = 2 * 60 * 1000;
 const AD_MIN_VIEW_MS = 15 * 1000;
 const LAST_CODE_TIME_KEY = "lottery_last_code_at";
 const LAST_CODE_VALUE_KEY = "lottery_last_code_value";
