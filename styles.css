@@ -31,6 +31,24 @@ body {
   padding: 0 16px 24px;
 }
 
+.page-layout {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr) 180px;
+  gap: 12px;
+  align-items: start;
+}
+
+.side-ads {
+  padding: 24px 8px;
+}
+
+.side-card {
+  position: sticky;
+  top: 12px;
+}
+
 h1,
 h2 {
   margin-top: 0;
@@ -100,6 +118,19 @@ h2 {
   min-height: 80px;
   display: grid;
   place-items: center;
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  padding: 10px;
+  gap: 10px;
+}
+
+.ad-unit {
+  width: 100%;
+  text-align: center;
+}
+
+.entry-ad {
+  margin-top: 14px;
   border: 1px dashed var(--border);
   border-radius: 10px;
   padding: 10px;
@@ -192,6 +223,20 @@ li + li {
 
 a {
   color: #0b5ed7;
+}
+
+@media (max-width: 1080px) {
+  .page-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .side-ads {
+    padding: 0 8px;
+  }
+
+  .side-card {
+    position: static;
+  }
 }
 
 @media (max-width: 540px) {
